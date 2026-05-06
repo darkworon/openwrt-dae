@@ -115,16 +115,16 @@ clone_or_update "$luci_app_dae_repo" "$luci_app_dae_ref" "$luci_app_dae_dir"
 
 apply_mt6000_overlay
 
-log "Installing custom dae package"
-"$repo_dir/scripts/install-package.sh" "$openwrt_dir"
-install_luci_app_dae
-
 log "Updating feeds"
 (
   cd "$openwrt_dir"
   ./scripts/feeds update -a
   ./scripts/feeds install -a
 )
+
+log "Installing custom dae package"
+"$repo_dir/scripts/install-package.sh" "$openwrt_dir"
+install_luci_app_dae
 
 log "Expanding config"
 make -C "$openwrt_dir" defconfig

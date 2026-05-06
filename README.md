@@ -63,7 +63,7 @@ upstream `master` branch appears later, set `DAE_SOURCE_REF=master`.
 ## MT6000 Image Integration
 
 In an MT6000 OpenWrt build job, replace the old "copy dae from immortalwrt"
-step with:
+step after `./scripts/feeds install -a` with:
 
 ```sh
 git clone --depth=1 https://github.com/darkworon/openwrt-dae.git /tmp/openwrt-dae
