@@ -49,8 +49,9 @@ OPENWRT_REF=main
 MT6000_OVERLAY_REF=main
 ```
 
-To build the newest dae from another branch, start the package workflow with a
-different `DAE_SOURCE_REF`. If you want a pinned reproducible build, set
+To build the newest dae from another branch, start the `openwrt-mt6000`
+firmware workflow with a different `DAE_SOURCE_REF`. If you want a pinned
+reproducible build, set
 `DAE_SOURCE_VERSION` to a commit hash.
 
 As of May 6, 2026, `daeuniverse/dae` uses `main` as its default branch. If an
