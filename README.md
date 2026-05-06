@@ -31,14 +31,11 @@ The install script copies this package to:
 and removes feed-installed `dae` package directories so this custom package is
 the one selected by `CONFIG_PACKAGE_dae=y`.
 
-## GitLab CI
+## CI Usage
 
-The repository is designed to build on GitLab CI, not on a laptop.
-
-Default pipeline:
-
-- `build-package`: builds OpenWrt MT6000 target enough to compile `dae`
-- `build-image`: manual by default, or automatic with `BUILD_IMAGE=1`
+This repository is a package source. The MT6000 package/image build is run from
+`darkworon/openwrt-mt6000` GitHub Actions, which installs this package into an
+OpenWrt tree after `./scripts/feeds install -a`.
 
 Useful CI variables:
 
@@ -50,10 +47,9 @@ DAE_OUTBOUND_REF=stickyip-salamander
 DAE_OUTBOUND_REPO=https://github.com/darkworon/outbound.git
 OPENWRT_REF=main
 MT6000_OVERLAY_REF=main
-BUILD_IMAGE=1
 ```
 
-To build the newest dae from another branch, start a GitLab pipeline with a
+To build the newest dae from another branch, start the package workflow with a
 different `DAE_SOURCE_REF`. If you want a pinned reproducible build, set
 `DAE_SOURCE_VERSION` to a commit hash.
 

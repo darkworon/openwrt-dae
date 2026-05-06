@@ -32,6 +32,6 @@ mkdir -p "$(dirname "$target_dir")"
 rm -rf "$target_dir"
 rsync -a --delete "$repo_dir/net/dae/" "$target_dir/"
 
-find "$openwrt_dir/package/feeds" -mindepth 2 -maxdepth 2 -type d -name dae -prune -exec rm -rf {} + 2>/dev/null || true
+find "$openwrt_dir/package/feeds" -mindepth 2 -maxdepth 2 \( -type d -o -type l \) -name dae -prune -exec rm -rf {} + 2>/dev/null || true
 
 echo "installed custom dae package: $target_dir"
