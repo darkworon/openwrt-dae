@@ -25,6 +25,8 @@ overlay_repo="${MT6000_OVERLAY_REPO:-https://github.com/darkworon/openwrt-mt6000
 overlay_ref="${MT6000_OVERLAY_REF:-main}"
 luci_app_dae_repo="${LUCI_APP_DAE_REPO:-https://github.com/darkworon/openwrt-mt6000-luci-app-dae.git}"
 luci_app_dae_ref="${LUCI_APP_DAE_REF:-main}"
+dae_source_url="${DAE_SOURCE_URL:-https://github.com/daeuniverse/dae.git}"
+dae_source_ref="${DAE_SOURCE_REF:-main}"
 
 jobs="${JOBS:-$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 2)}"
 ccache_dir="${CCACHE_DIR:-$workdir/ccache}"
@@ -46,6 +48,26 @@ clone_or_update() {
     git -C "$dir" reset --hard FETCH_HEAD
     git -C "$dir" clean -ffd
   fi
+}
+
+resolve_dae_source_version() {
+  if [[ -n "${DAE_SOURCE_VERSION:-}" && "${DAE_SOURCE_VERSION}" != "latest" ]]; then
+    log "Using pinned dae source: $DAE_SOURCE_VERSION"
+    return
+  fi
+
+  local commit
+  commit="$(git ls-remote "$dae_source_url" "refs/heads/$dae_source_ref" | awk '{print $1}')"
+  if [[ -z "$commit" ]]; then
+    commit="$(git ls-remote "$dae_source_url" "$dae_source_ref" | awk 'NR == 1 {print $1}')"
+  fi
+  [[ -n "$commit" ]] || {
+    echo "error: cannot resolve DAE_SOURCE_REF=$dae_source_ref from $dae_source_url" >&2
+    exit 1
+  }
+
+  export DAE_SOURCE_VERSION="$commit"
+  log "Resolved dae $dae_source_ref to $DAE_SOURCE_VERSION"
 }
 
 apply_mt6000_overlay() {
@@ -79,6 +101,8 @@ install_luci_app_dae() {
 }
 
 mkdir -p "$workdir" "$ccache_dir"
+
+resolve_dae_source_version
 
 log "Cloning OpenWrt: $openwrt_repo $openwrt_ref"
 clone_or_update "$openwrt_repo" "$openwrt_ref" "$openwrt_dir"

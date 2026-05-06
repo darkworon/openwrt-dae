@@ -8,10 +8,11 @@ The package name is still `dae`, so an OpenWrt config that already contains
 
 ## What It Builds
 
-- `dae` from `DAE_SOURCE_URL` / `DAE_SOURCE_VERSION`
+- `dae` from `DAE_SOURCE_URL` / `DAE_SOURCE_REF`
 - `github.com/daeuniverse/outbound` replaced with
   `DAE_OUTBOUND_REPO` / `DAE_OUTBOUND_REF`
 - default outbound ref: `darkworon/outbound:stickyip-salamander`
+- default dae ref: `daeuniverse/dae:main`
 
 ## Use In An OpenWrt Tree
 
@@ -42,8 +43,9 @@ Default pipeline:
 Useful CI variables:
 
 ```text
-DAE_SOURCE_VERSION=0a4de9d9a74477f62ed7c8e064d933f878cf2f39
-DAE_PKG_VERSION=1.1.0-salamander
+DAE_SOURCE_REF=main
+DAE_SOURCE_VERSION=latest
+DAE_PKG_VERSION=2.0.0_alpha_git
 DAE_OUTBOUND_REF=stickyip-salamander
 DAE_OUTBOUND_REPO=https://github.com/darkworon/outbound.git
 OPENWRT_REF=main
@@ -51,8 +53,12 @@ MT6000_OVERLAY_REF=main
 BUILD_IMAGE=1
 ```
 
-To build another dae revision, start a GitLab pipeline with a different
-`DAE_SOURCE_VERSION` and, if needed, `DAE_PKG_VERSION`.
+To build the newest dae from another branch, start a GitLab pipeline with a
+different `DAE_SOURCE_REF`. If you want a pinned reproducible build, set
+`DAE_SOURCE_VERSION` to a commit hash.
+
+As of May 6, 2026, `daeuniverse/dae` uses `main` as its default branch. If an
+upstream `master` branch appears later, set `DAE_SOURCE_REF=master`.
 
 ## MT6000 Image Integration
 
