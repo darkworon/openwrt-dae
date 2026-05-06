@@ -1,0 +1,74 @@
+# openwrt-dae
+
+Custom OpenWrt package feed for building `dae` with a patched Hysteria2
+`salamander` outbound.
+
+The package name is still `dae`, so an OpenWrt config that already contains
+`CONFIG_PACKAGE_dae=y` can use it without changing package selections.
+
+## What It Builds
+
+- `dae` from `DAE_SOURCE_URL` / `DAE_SOURCE_VERSION`
+- `github.com/daeuniverse/outbound` replaced with
+  `DAE_OUTBOUND_REPO` / `DAE_OUTBOUND_REF`
+- default outbound ref: `darkworon/outbound:stickyip-salamander`
+
+## Use In An OpenWrt Tree
+
+```sh
+git clone https://github.com/darkworon/openwrt-dae.git /tmp/openwrt-dae
+/tmp/openwrt-dae/scripts/install-package.sh /path/to/openwrt
+make -C /path/to/openwrt package/dae/compile V=s
+```
+
+The install script copies this package to:
+
+```text
+/path/to/openwrt/package/custom/dae
+```
+
+and removes feed-installed `dae` package directories so this custom package is
+the one selected by `CONFIG_PACKAGE_dae=y`.
+
+## GitLab CI
+
+The repository is designed to build on GitLab CI, not on a laptop.
+
+Default pipeline:
+
+- `build-package`: builds OpenWrt MT6000 target enough to compile `dae`
+- `build-image`: manual by default, or automatic with `BUILD_IMAGE=1`
+
+Useful CI variables:
+
+```text
+DAE_SOURCE_VERSION=0a4de9d9a74477f62ed7c8e064d933f878cf2f39
+DAE_PKG_VERSION=1.1.0-salamander
+DAE_OUTBOUND_REF=stickyip-salamander
+DAE_OUTBOUND_REPO=https://github.com/darkworon/outbound.git
+OPENWRT_REF=main
+MT6000_OVERLAY_REF=main
+BUILD_IMAGE=1
+```
+
+To build another dae revision, start a GitLab pipeline with a different
+`DAE_SOURCE_VERSION` and, if needed, `DAE_PKG_VERSION`.
+
+## MT6000 Image Integration
+
+In an MT6000 OpenWrt build job, replace the old "copy dae from immortalwrt"
+step with:
+
+```sh
+git clone --depth=1 https://github.com/darkworon/openwrt-dae.git /tmp/openwrt-dae
+/tmp/openwrt-dae/scripts/install-package.sh "$OPENWRT_DIR"
+```
+
+Then run the normal OpenWrt build. If the config already has:
+
+```text
+CONFIG_PACKAGE_dae=y
+CONFIG_PACKAGE_luci-app-dae=y
+```
+
+the firmware image will include this custom `dae`.
